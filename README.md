@@ -17,3 +17,20 @@ Este projeto simula o atendimento em um bar, onde clientes fazem pedidos e garç
 4. Compile o código:
    ```bash
    javac AtendimentoBar.java
+      ```
+
+5. Execute a simulação:
+    - Com valores padrão (10 clientes, 3 garçons, capacidade 4, 15 rodadas):
+       ```bash
+       java AtendimentoBar
+       ```
+    - Ou especifique os parâmetros na linha de comando:
+       ```bash
+       java AtendimentoBar <totalClientes> <numGarcons> <capacidadeGarcons> <numRodadas>
+       ```
+       Exemplo para 12 clientes, 4 garçons, capacidade 5, 20 rodadas:
+       ```bash
+       java AtendimentoBar 12 4 5 20
+       ```
+
+    Se fornecer argumentos inválidos, o programa mostrará uma mensagem de uso.
