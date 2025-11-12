@@ -80,10 +80,29 @@ public class AtendimentoBar {
      */
     public static void main(String[] args) {
         // --- Parâmetros da Simulação ---
-        int totalClientes = 10;     // a. Quantidade de clientes
+        int totalClientes = 8;     // a. Quantidade de clientes
         int numGarcons = 3;         // b. Quantidade de garçons
         int capacidadeGarcons = 4;  // c. Capacidade (C) de cada garçom
-        int numRodadas = 15;        // d. Número total de rodadas a serem servidas
+        int numRodadas = 8;        // d. Número total de rodadas a serem servidas
+
+        // Permite sobrescrever via argumentos de linha de comando
+        // Uso: java AtendimentoBar [totalClientes numGarcons capacidadeGarcons numRodadas]
+        if (args.length == 4) {
+            try {
+                totalClientes = Integer.parseInt(args[0]);
+                numGarcons = Integer.parseInt(args[1]);
+                capacidadeGarcons = Integer.parseInt(args[2]);
+                numRodadas = Integer.parseInt(args[3]);
+            } catch (NumberFormatException e) {
+                System.err.println("Argumentos inválidos. Todos devem ser inteiros.");
+                System.err.println("Uso: java AtendimentoBar [totalClientes numGarcons capacidadeGarcons numRodadas]");
+                return;
+            }
+        } else if (args.length != 0) {
+            System.out.println("Argumentos inválidos. Forneça 0 ou 4 argumentos.");
+            System.out.println("Uso: java AtendimentoBar [totalClientes numGarcons capacidadeGarcons numRodadas]");
+            return;
+        }
         // ---------------------------------
 
         System.out.println(String.format(
