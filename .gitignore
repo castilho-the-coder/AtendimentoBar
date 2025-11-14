@@ -1,0 +1,21 @@
+# Arquivos compilados Java
+*.class
+
+# Arquivos de IDE
+.idea/
+*.iml
+.vscode/
+*.swp
+*.swo
+*~
+
+# Arquivos de build
+target/
+build/
+out/
+dist/
+
+# Arquivos de sistema
+.DS_Store
+Thumbs.db
+

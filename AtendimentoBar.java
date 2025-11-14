@@ -14,8 +14,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class AtendimentoBar {
 
-    // Fila de pedidos (thread-safe) onde os clientes colocam pedidos
-    // e os garçons os retiram.
+    // Fila de pedidos onde os clientes colocam pedidos e os garçons os retiram.
     private final BlockingQueue<Pedido> filaDePedidos = new LinkedBlockingQueue<>();
     
     // Contador atômico para o número total de rodadas (viagens à copa)
@@ -201,7 +200,6 @@ class Garcom implements Runnable {
     private final int capacidade;
     private final AtomicInteger rodadasGlobais;
     private final int MAX_RODADAS;
-    private final Random rand = new Random();
 
     public Garcom(int id, BlockingQueue<Pedido> filaDePedidos, int capacidade, AtomicInteger rodadasGlobais, int maxRodadas) {
         this.id = id;
