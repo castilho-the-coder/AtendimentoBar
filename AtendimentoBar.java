@@ -9,21 +9,18 @@ import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
-/**
- * Classe principal que orquestra a simulação do atendimento no bar.
- */
 public class AtendimentoBar {
 
-    // Fila de pedidos onde os clientes colocam pedidos e os garçons os retiram.
+    // fila de pedidos onde os clientes colocam pedidos e os garçons os retiram.
     private final BlockingQueue<Pedido> filaDePedidos = new LinkedBlockingQueue<>();
     
-    // Contador atômico para o número total de rodadas (viagens à copa)
+    // contador atômico para o número total de rodadas 
     private final AtomicInteger rodadasGlobais = new AtomicInteger(0);
     
-    // O número máximo de rodadas antes que o bar feche
+    // número máximo de rodadas antes que o bar feche
     private final int MAX_RODADAS;
     
-    // Gerenciadores de threads
+    // gerenciadores de threads
     private final ExecutorService poolClientes;
     private final ExecutorService poolGarcons;
 
@@ -32,25 +29,23 @@ public class AtendimentoBar {
         this.poolClientes = Executors.newFixedThreadPool(totalClientes);
         this.poolGarcons = Executors.newFixedThreadPool(numGarcons);
 
-        // Inicializa e inicia os garçons
+        // inicia os garçons
         for (int i = 0; i < numGarcons; i++) {
             poolGarcons.submit(new Garcom(i, filaDePedidos, capacidadeGarcons, rodadasGlobais, MAX_RODADAS));
         }
 
-        // Inicializa e inicia os clientes
+        // inicia os clientes
         for (int i = 0; i < totalClientes; i++) {
             poolClientes.submit(new Cliente(i, filaDePedidos));
         }
     }
 
-    /**
-     * Inicia a simulação e aguarda o término.
-     */
+    // inicia a simulação 
     public void iniciarSimulacao() {
-        // Aguarda os garçons terminarem suas rodadas
-        poolGarcons.shutdown(); // Para de aceitar novas tarefas
+        // aguarda os garçons terminarem suas rodadas
+        poolGarcons.shutdown(); // para de aceitar novas tarefas
         try {
-            // Aguarda indefinidamente até que todas as rodadas sejam concluídas
+            // aguarda até que todas as rodadas sejam concluídas
             if (!poolGarcons.awaitTermination(1, TimeUnit.HOURS)) {
                 System.err.println("Tempo de simulação excedido.");
                 poolGarcons.shutdownNow();
@@ -60,11 +55,11 @@ public class AtendimentoBar {
             poolGarcons.shutdownNow();
         }
 
-        // Quando os garçons terminam, o bar fecha.
+        // quando os garçons terminam, o bar fecha.
         System.out.println("\n--- O BAR FECHOU (Total de " + rodadasGlobais.get() + " rodadas servidas) ---");
         
-        // Interrompe todos os clientes (que podem estar esperando ou consumindo)
-        poolClientes.shutdownNow(); // Envia InterruptedException para todos os clientes
+        // interrompe todos os clientes
+        poolClientes.shutdownNow();
         try {
             poolClientes.awaitTermination(10, TimeUnit.SECONDS);
         } catch (InterruptedException e) {
@@ -74,18 +69,12 @@ public class AtendimentoBar {
         System.out.println("--- SIMULAÇÃO ENCERRADA ---");
     }
 
-    /**
-     * Ponto de entrada principal
-     */
     public static void main(String[] args) {
-        // --- Parâmetros da Simulação ---
-        int totalClientes = 8;     // a. Quantidade de clientes
-        int numGarcons = 3;         // b. Quantidade de garçons
-        int capacidadeGarcons = 4;  // c. Capacidade (C) de cada garçom
-        int numRodadas = 8;        // d. Número total de rodadas a serem servidas
+        int totalClientes = 8;     // quantidade de clientes
+        int numGarcons = 3;         // quantidade de garçons
+        int capacidadeGarcons = 4;  // capacidade de cada garçom
+        int numRodadas = 8;        // número total de rodadas a serem servidas
 
-        // Permite sobrescrever via argumentos de linha de comando
-        // Uso: java AtendimentoBar [totalClientes numGarcons capacidadeGarcons numRodadas]
         if (args.length == 4) {
             try {
                 totalClientes = Integer.parseInt(args[0]);
@@ -102,7 +91,6 @@ public class AtendimentoBar {
             System.out.println("Uso: java AtendimentoBar [totalClientes numGarcons capacidadeGarcons numRodadas]");
             return;
         }
-        // ---------------------------------
 
         System.out.println(String.format(
             "Iniciando simulação: %d Clientes, %d Garçons (Capacidade %d), %d Rodadas totais.",
@@ -113,15 +101,11 @@ public class AtendimentoBar {
         bar.iniciarSimulacao();
     }
 }
-
-/**
- * Representa um único pedido de um cliente.
- * Contém um Semáforo para que o cliente possa esperar (acquire)
- * e o garçom possa notificá-lo (release).
- */
+// representa um único pedido de um cliente
+// contém um semáforo para que o cliente possa esperar e o garçom possa notificá-lo
 class Pedido {
     private final int clienteId;
-    // Semáforo (0) - bloqueia o cliente até que o garçom dê 'release'
+    // bloqueia o cliente até que o garçom dê release
     private final Semaphore semaforo = new Semaphore(0);
 
     public Pedido(int clienteId) {
@@ -145,9 +129,6 @@ class Pedido {
     }
 }
 
-/**
- * Thread (Runnable) que representa um Cliente.
- */
 class Cliente implements Runnable {
     private final int id;
     private final BlockingQueue<Pedido> filaDePedidos;
@@ -161,39 +142,34 @@ class Cliente implements Runnable {
     @Override
     public void run() {
         try {
-            // Loop de cliente: faz pedido, espera, consome.
+            // loop de cliente: faz pedido, espera, come
             while (true) {
-                // 1. fazPedido()
+        
                 Pedido meuPedido = new Pedido(id);
                 System.out.println("Cliente " + id + " fez um pedido.");
-                filaDePedidos.put(meuPedido); // Coloca o pedido na fila
+                filaDePedidos.put(meuPedido); // coloca o pedido na fila
 
-                // 2. esperaPedido()
                 System.out.println("Cliente " + id + " está esperando o pedido...");
-                meuPedido.esperar(); // Bloqueia até o garçom entregar
+                meuPedido.esperar(); // bloqueia até o garçom entregar
 
-                // 3. recebePedido()
                 System.out.println("Cliente " + id + " RECEBEU o pedido!");
 
-                // 4. consomePedido() (tempo aleatório)
                 int tempoConsumo = rand.nextInt(3000) + 2000; // 2-5 segundos
                 Thread.sleep(tempoConsumo);
                 System.out.println("Cliente " + id + " terminou de consumir (levou " + tempoConsumo + "ms).");
                 
-                // Pausa antes de fazer um novo pedido
+                // pausa antes de fazer um novo pedido
                 Thread.sleep(rand.nextInt(5000) + 1000); 
             }
         } catch (InterruptedException e) {
-            // O bar fechou, a thread foi interrompida
+            // bar fechou thread interrompida
             System.out.println("Cliente " + id + " foi para casa (bar fechou).");
-            Thread.currentThread().interrupt(); // Restaura o status de interrupção
+            Thread.currentThread().interrupt();
         }
     }
 }
 
-/**
- * Thread (Runnable) que representa um Garçom.
- */
+
 class Garcom implements Runnable {
     private final int id;
     private final BlockingQueue<Pedido> filaDePedidos;
@@ -212,47 +188,39 @@ class Garcom implements Runnable {
     @Override
     public void run() {
         try {
-            // Loop do garçom: continua trabalhando enquanto o bar não atingir o
-            // número máximo de rodadas.
+            // loop do garçom: continua trabalhando enquanto o bar não atingir número máximo de rodadas
             while (rodadasGlobais.get() < MAX_RODADAS) {
-                
-                // 1. recebeMaximoPedidos()
+    
                 List<Pedido> pedidosDaRodada = new ArrayList<>();
                 
-                // Pega o primeiro pedido (bloqueia a thread até ter ao menos 1)
                 System.out.println("Garçom " + id + " está esperando por pedidos.");
                 Pedido primeiroPedido = filaDePedidos.take(); 
                 pedidosDaRodada.add(primeiroPedido);
 
-                // Pega os pedidos restantes até a capacidade (C)
-                // 'drainTo' pega todos os itens disponíveis na fila, 
-                // sem bloquear, até o limite de (capacidade - 1).
+                // pega os pedidos restantes até a capacidade (C)
                 filaDePedidos.drainTo(pedidosDaRodada, capacidade - 1);
 
                 int numPedidos = pedidosDaRodada.size();
                 System.out.println("Garçom " + id + " pegou " + numPedidos + " pedidos.");
 
-                // 2. registraPedidos() (Simula ida à copa / bartender)
+                // registraPedidos()  (ida à copa)
                 int tempoPreparo = 1000 + (numPedidos * 250); // Tempo baseado no nº de pedidos
                 System.out.println("Garçom " + id + " está na copa (preparando " + numPedidos + " pedidos...)");
                 Thread.sleep(tempoPreparo);
 
-                // 3. entregaPedidos()
                 System.out.println("Garçom " + id + " está entregando " + numPedidos + " pedidos:");
                 for (Pedido pedido : pedidosDaRodada) {
                     System.out.println("\t-> Garçom " + id + " entregando ao Cliente " + pedido.getClienteId());
                     pedido.entregar(); // Libera o semáforo do cliente
                 }
 
-                // 4. rodada++
                 int rodadaAtual = rodadasGlobais.incrementAndGet();
                 System.out.println("Garçom " + id + " completou a rodada. (Rodada global: " + rodadaAtual + "/" + MAX_RODADAS + ")");
 
-                // Pequena pausa para o garçom
                 Thread.sleep(500);
             }
         } catch (InterruptedException e) {
-            // Se o garçom for interrompido (ex: bar fechando mais cedo)
+            // se o garçom for interrompido 
             System.out.println("Garçom " + id + " foi dispensado (interrompido).");
             Thread.currentThread().interrupt();
         }
