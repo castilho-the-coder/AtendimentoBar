@@ -91,7 +91,7 @@ public class AtendimentoBar {
         int numGarcons = 3;         // quantidade de garçons
         int capacidadeGarcons = 3;  // capacidade de cada garçom
         int numRodadas = 6;        // número total de rodadas a serem servidas
-        long timeoutMillis = 500;  // timeout padrão (ms) para garçom esperar por pedidos extras
+        long timeoutMillis = 1000;  // timeout padrão (ms) para garçom esperar por pedidos extras
 
         if (args.length == 4 || args.length == 5) {
             try {
