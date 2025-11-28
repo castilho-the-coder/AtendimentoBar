@@ -28,8 +28,8 @@ public class Cliente implements Runnable {
             while (true) { // loop principal: faz pedidos, espera entrega e consome
                 Pedido meuPedido = new Pedido(id); // cria novo pedido associado a este cliente
                 System.out.println("Cliente " + id + " fez um pedido."); // log de criação do pedido
-                filaDePedidos.put(meuPedido); // coloca o pedido na fila (pode bloquear se fila cheia)
-
+                filaDePedidos.put(meuPedido); // coloca o pedido na fila 
+                
                 // após colocar o primeiro pedido libera o próximo cliente na cadeia
                 if (firstTime) {
                     if (nextSemaphore != null) nextSemaphore.release(); // libera o próximo cliente
